@@ -1,0 +1,15 @@
+# GoWin IDE build outputs
+impl/gwsynthesis/
+impl/pnr/
+impl/temp/
+impl/MissU_project_process_config.json
+
+# Backup files
+*.bak
+
+# IDE user settings
+*.gprj.user
+
+# OS files
+Thumbs.db
+desktop.ini
