@@ -134,7 +134,7 @@ begin
             rst_n        => rst_n,
             wdi_clean    => wdi_clean,     --  S1 
             en_clean     => en_clean,      --  S2 
-            en_sw        => wdt_ctrl(0),   -- Lấy từ cấu hình UART
+            en_sw        => wdt_ctrl(0),   
             clr_fault    => wdt_ctrl(2),
             kick_uart    => wdt_kick,      -- Đá bằng UART CMD
             twd          => wdt_twd,       
