@@ -52,9 +52,9 @@ architecture rtl of system_top is
     signal tx_state : tx_state_t := IDLE;
     signal send_en  : std_logic;
 
-    -- Debounce (Sử dụng clock chậm hơn để lọc rung nút nhấn)
-    signal db_clk_cnt : integer range 0 to 27000 := 0; -- Chia 27MHz xuống ~1ms
-    signal db_tick    : std_logic;    -- Debounce Counter-based (Threshold ~20ms @ 27MHz = 540,000 cycles)
+    -- Debounce
+    signal db_clk_cnt : integer range 0 to 27000 := 0;
+    signal db_tick    : std_logic;    
     constant DB_LIMIT : integer := 540000;
     signal wdi_cnt    : integer range 0 to DB_LIMIT := 0;
     signal en_cnt     : integer range 0 to DB_LIMIT := 0;
@@ -82,7 +82,7 @@ begin
     rst_active_high <= not rst_n; 
 
 
-    -- DEBOUNCE COUNTER-BASED (Lọc rung bằng bộ đếm)
+    -- DEBOUNCE 
     process(clk, rst_n)
     begin
         if rst_n = '0' then
@@ -93,11 +93,11 @@ begin
         elsif rising_edge(clk) then
             -- Xử lý nút S1 (WDI)
             if btn_wdi /= wdi_prev then
-                wdi_cnt <= 0; -- Reset bộ đếm nếu có sự thay đổi (nhiễu hoặc mới bấm)
+                wdi_cnt <= 0; -- Reset bộ đếm nếu có nhiễu 
             elsif wdi_cnt < DB_LIMIT then
                 wdi_cnt <= wdi_cnt + 1;
             else
-                wdi_clean <= wdi_prev; -- Chỉ cập nhật khi tín hiệu ổn định đủ lâu
+                wdi_clean <= wdi_prev; 
             end if;
             wdi_prev <= btn_wdi;
 
@@ -145,8 +145,8 @@ begin
         );
 
     wdt_status <= x"000000" & "000" & wdt_kick & sig_wdo & sig_enout & sig_fault & sig_en_eff;
-    led_wdo <= sig_wdo;           -- Fault thì LED sáng (Active-Low LED)
-    led_enout <= not sig_enout;   -- Hoạt động thì LED sáng (Đảo logic cho Active-Low LED)
+    led_wdo <= sig_wdo;          
+    led_enout <= not sig_enout;   
 
     -- Khối giám sát Watchdog Core 
     wdt_inst : entity work.Watchdog_Core
