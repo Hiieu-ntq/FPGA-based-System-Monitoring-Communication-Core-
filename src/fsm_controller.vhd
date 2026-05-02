@@ -43,7 +43,7 @@ architecture Behavioral of fsm_controller is
     signal tx_cnt   : integer range 0 to 15 := 0;
 
     -- Internal Registers
-    signal reg_ctrl      : std_logic_vector(31 downto 0) := x"00000001";
+    signal reg_ctrl      : std_logic_vector(31 downto 0) := x"00000000"; -- Mặc định Disable sau Reset (Yêu cầu 4.1.1)
     signal reg_twd       : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(1600, 32));
     signal reg_trst      : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(200, 32));
     signal reg_arm_delay : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(150, 32));
@@ -68,6 +68,7 @@ begin
             fifo_rx_rd_en <= '0';
             fifo_tx_wr_en <= '0';
             wdt_kick <= '0';
+            reg_ctrl(2) <= '0'; -- Tự động xóa bit CLR_FAULT sau 1 chu kỳ (Yêu cầu 4.2.8)
             gcd_start <= '0';
 
             case state is

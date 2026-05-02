@@ -52,9 +52,16 @@ architecture rtl of system_top is
     signal tx_state : tx_state_t := IDLE;
     signal send_en  : std_logic;
 
-    -- Debounce
-    signal wdi_shift, en_shift : std_logic_vector(15 downto 0) := (others => '1');
-    signal wdi_clean, en_clean : std_logic := '1';
+    -- Debounce (Sử dụng clock chậm hơn để lọc rung nút nhấn)
+    signal db_clk_cnt : integer range 0 to 27000 := 0; -- Chia 27MHz xuống ~1ms
+    signal db_tick    : std_logic;    -- Debounce Counter-based (Threshold ~20ms @ 27MHz = 540,000 cycles)
+    constant DB_LIMIT : integer := 540000;
+    signal wdi_cnt    : integer range 0 to DB_LIMIT := 0;
+    signal en_cnt     : integer range 0 to DB_LIMIT := 0;
+    signal wdi_clean  : std_logic := '1';
+    signal en_clean   : std_logic := '1';
+    signal wdi_prev   : std_logic := '1';
+    signal en_prev    : std_logic := '1';
 
 begin
 
@@ -75,19 +82,34 @@ begin
     rst_active_high <= not rst_n; 
 
 
-    -- DEBOUNCE
-    process(clk)
+    -- DEBOUNCE COUNTER-BASED (Lọc rung bằng bộ đếm)
+    process(clk, rst_n)
     begin
-        if rising_edge(clk) then
+        if rst_n = '0' then
+            wdi_cnt <= 0;
+            en_cnt  <= 0;
+            wdi_clean <= '1';
+            en_clean  <= '1';
+        elsif rising_edge(clk) then
             -- Xử lý nút S1 (WDI)
-            wdi_shift <= wdi_shift(14 downto 0) & btn_wdi;
-            if wdi_shift = x"0000" then wdi_clean <= '0';
-            elsif wdi_shift = x"FFFF" then wdi_clean <= '1'; end if;
+            if btn_wdi /= wdi_prev then
+                wdi_cnt <= 0; -- Reset bộ đếm nếu có sự thay đổi (nhiễu hoặc mới bấm)
+            elsif wdi_cnt < DB_LIMIT then
+                wdi_cnt <= wdi_cnt + 1;
+            else
+                wdi_clean <= wdi_prev; -- Chỉ cập nhật khi tín hiệu ổn định đủ lâu
+            end if;
+            wdi_prev <= btn_wdi;
 
             -- Xử lý nút S2 (EN)
-            en_shift <= en_shift(14 downto 0) & btn_en;
-            if en_shift = x"0000" then en_clean <= '0';
-            elsif en_shift = x"FFFF" then en_clean <= '1'; end if;
+            if btn_en /= en_prev then
+                en_cnt <= 0;
+            elsif en_cnt < DB_LIMIT then
+                en_cnt <= en_cnt + 1;
+            else
+                en_clean <= en_prev;
+            end if;
+            en_prev <= btn_en;
         end if;
     end process;
 
@@ -123,8 +145,8 @@ begin
         );
 
     wdt_status <= x"000000" & "000" & wdt_kick & sig_wdo & sig_enout & sig_fault & sig_en_eff;
-    led_wdo <= sig_wdo;
-    led_enout <= sig_enout;
+    led_wdo <= sig_wdo;           -- Fault thì LED sáng (Active-Low LED)
+    led_enout <= not sig_enout;   -- Hoạt động thì LED sáng (Đảo logic cho Active-Low LED)
 
     -- Khối giám sát Watchdog Core 
     wdt_inst : entity work.Watchdog_Core
