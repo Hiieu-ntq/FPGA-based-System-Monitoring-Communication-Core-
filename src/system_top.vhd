@@ -21,7 +21,6 @@ architecture rtl of system_top is
 
     -- Tín hiệu tự động Reset
     signal rst_n   : std_logic := '0';
-    signal por_cnt : integer range 0 to 255 := 0;
 
     -- UART
     signal tick_1x, tick_16x : std_logic;
@@ -53,19 +52,13 @@ architecture rtl of system_top is
 
 begin
 
-
-    --  RESET tự động
-    process(clk)
-    begin
-        if rising_edge(clk) then
-            if por_cnt < 255 then
-                por_cnt <= por_cnt + 1;
-                rst_n <= '0';  
-            else
-                rst_n <= '1';  
-            end if;
-        end if;
-    end process;
+    -- KHỞI TẠO POWER-ON RESET
+    por_inst : entity work.power_on_reset
+        generic map (WAIT_CYCLES => 255)
+        port map (
+            clk   => clk,
+            rst_n => rst_n
+        );
 
     rst_active_high <= not rst_n; 
 
