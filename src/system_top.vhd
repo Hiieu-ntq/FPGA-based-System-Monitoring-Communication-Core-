@@ -6,7 +6,6 @@ entity system_top is
     port (
         clk       : in  std_logic;
         
-        -- 
         uart_rx   : in  std_logic;
         uart_tx   : out std_logic;
         
