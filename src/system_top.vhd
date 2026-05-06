@@ -96,12 +96,17 @@ begin
         );
 
     -- GCD
-     gcd_inst : entity work.GCD
-        generic map (DATA_WIDTH => 32)
-        port map (
-            clk => clk, rst => rst_active_high, start => gcd_start,
-            x_in => gcd_a, y_in => gcd_b, done_o => gcd_done, gcd_o => gcd_result
-        );
+gcd_inst : entity work.GCD_modular 
+    generic map (DATA_WIDTH => 32)
+    port map (
+        clk => clk, 
+        rst => rst_active_high, 
+        start => gcd_start,
+        x_in => gcd_a, 
+        y_in => gcd_b, 
+        done_o => gcd_done, 
+        gcd_o => gcd_result
+    );
 
     wdt_status <= x"000000" & "000" & wdt_kick & sig_wdo & sig_enout & sig_fault & sig_en_eff;
     led_wdo <= sig_wdo;           -- Fault thì LED sáng (Active-Low LED)

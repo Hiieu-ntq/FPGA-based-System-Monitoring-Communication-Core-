@@ -75,9 +75,9 @@ END CASE;
 
 --Combinational logic-- 
 X_sel <= '1' WHEN state = S2 ELSE '0' ;
-X_ld <= '1' WHEN state = S2 ELSE '0';
+X_ld <= '1' WHEN (state = S2 OR state = S7) ELSE '0';
 Y_sel <= '1' WHEN state = S3 ELSE '0' ;
-Y_ld <= '1' WHEN state = S3 ELSE '0';
+Y_ld <= '1' WHEN (state = S3 OR state = S6) ELSE '0';
 GCD_ld <= '1' WHEN state = S9 ELSE '0';
 Done_o <= '1' WHEN state = S11 ELSE '0';
 
