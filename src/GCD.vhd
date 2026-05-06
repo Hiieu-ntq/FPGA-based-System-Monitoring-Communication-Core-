@@ -14,7 +14,7 @@ ENTITY GCD IS
     );
 END GCD;
 
-ARCHITECTURE Structural OF GCD_modular IS
+ARCHITECTURE Structural OF GCD IS
     -- Tín hiệu kết nối giữa Controller và Datapath
     signal sig_x_sel, sig_y_sel : std_logic;
     signal sig_x_ld, sig_y_ld   : std_logic;
