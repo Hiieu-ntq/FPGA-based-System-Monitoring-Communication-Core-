@@ -63,7 +63,7 @@ begin
     rst_active_high <= not rst_n; 
 
 
-    -- DEBOUNCE (Instantiate standalone modules)
+    -- DEBOUNCE 
     debounce_wdi_inst : entity work.debounce
         generic map (DB_LIMIT => 540000)
         port map (clk => clk, rst_n => rst_n, btn_in => btn_wdi, btn_clean => wdi_clean);
@@ -96,7 +96,7 @@ begin
         );
 
     -- GCD
-gcd_inst : entity work.GCD_modular 
+gcd_inst : entity work.GCD 
     generic map (DATA_WIDTH => 32)
     port map (
         clk => clk, 
@@ -109,8 +109,8 @@ gcd_inst : entity work.GCD_modular
     );
 
     wdt_status <= x"000000" & "000" & wdt_kick & sig_wdo & sig_enout & sig_fault & sig_en_eff;
-    led_wdo <= sig_wdo;           -- Fault thì LED sáng (Active-Low LED)
-    led_enout <= not sig_enout;   -- Hoạt động thì LED sáng (Đảo logic cho Active-Low LED)
+    led_wdo <= sig_wdo;       
+    led_enout <= not sig_enout;   
 
     -- Khối giám sát Watchdog Core 
     wdt_inst : entity work.Watchdog_Core
