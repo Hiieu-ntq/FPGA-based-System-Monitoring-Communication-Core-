@@ -1,7 +1,7 @@
 LIBRARY IEEE;
 USE ieee.std_logic_1164.all;
 
-ENTITY GCD_modular IS 
+ENTITY GCD IS 
     GENERIC ( DATA_WIDTH : integer := 32 );
     PORT (
         clk     : in  std_logic;
@@ -12,7 +12,7 @@ ENTITY GCD_modular IS
         gcd_o   : out std_logic_vector(DATA_WIDTH-1 downto 0);
         done_o  : out std_logic
     );
-END GCD_modular;
+END GCD;
 
 ARCHITECTURE Structural OF GCD_modular IS
     -- Tín hiệu kết nối giữa Controller và Datapath
@@ -22,7 +22,7 @@ ARCHITECTURE Structural OF GCD_modular IS
     signal sig_x_neq_y, sig_x_lt_y : std_logic;
 BEGIN
 
-    -- Khởi tạo Controller
+
     Control_Unit : entity work.Controller
         port map (
             RST     => rst,
@@ -38,7 +38,7 @@ BEGIN
             Done_o  => done_o
         );
 
-    -- Khởi tạo Datapath
+  
     Data_Unit : entity work.Datapath
         generic map ( DATA_WIDTH => DATA_WIDTH )
         port map (
