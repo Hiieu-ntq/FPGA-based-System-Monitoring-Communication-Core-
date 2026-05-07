@@ -1,7 +1,7 @@
 # Tài liệu Kiến trúc Hệ thống (System Top-Level)
 
 ## 1. Tổng quan (System Overview)
-Module `system_top` là thực thể cao nhất (Top-level Entity) của dự án SoC MissU. Module này đóng vai trò là "bo mạch chủ" kỹ thuật số, thực hiện việc kết nối các phân hệ chức năng, quản lý tín hiệu vào/ra vật lý và điều phối luồng dữ liệu giữa các khối communication, control và processing.
+Module `system_top` là thực thể cao nhất (Top-level Entity) của dự án SoC MissU. Module này đóng vai trò là bo mạch chủ, thực hiện việc kết nối các chức năng, quản lý tín hiệu vào/ra vật lý và điều phối luồng dữ liệu giữa các khối communication, control và processing.
 
 ### Các chức năng chính:
 - **Quản lý Reset:** Tích hợp bộ tạo reset tự động khi cấp nguồn (`power_on_reset`).
@@ -20,7 +20,7 @@ Dưới đây là sơ đồ khối mô tả cấu trúc phân cấp và các k�
   <img src="./system_top.svg" alt="Sơ đồ Kiến trúc system_top" width="100%">
 </a>
 
-*Hình 1: Sơ đồ kiến trúc phân cấp của SoC MissU (Click vào ảnh để phóng to)*
+*Hình 1: Sơ đồ kiến trúc phân cấp của SoC MissU*
 
 ---
 
@@ -28,23 +28,23 @@ Dưới đây là sơ đồ khối mô tả cấu trúc phân cấp và các k�
 
 Hệ thống được chia thành các lớp chức năng rõ rệt:
 
-### 3.1. Phân hệ Giao tiếp (Communication Subsystem)
+### 3.1. Lớp giao tiếp (Communication Subsystem)
 - **baud_gen:** Tạo xung nhịp đồng bộ cho UART.
 - **uart_byte_rx / tx:** Chuyển đổi dữ liệu Nối tiếp <-> Song song.
 - **fifo_rx / tx:** Bộ đệm dữ liệu giúp ổn định tốc độ truyền dẫn và tránh mất mát gói tin.
 - **uart_tx_control:** Điều phối việc lấy dữ liệu từ FIFO để truyền đi.
 
-### 3.2. Bộ điều khiển Trung tâm (Control Layer)
+### 3.2. Lớp điều khiển Trung tâm (Control Layer)
 - **fsm_controller:** "Bộ não" của hệ thống. Nó thực hiện máy trạng thái (FSMD) để:
     - Giải mã gói tin UART 9-byte (Check Header, Checksum).
     - Đọc/Ghi dữ liệu vào các thanh ghi ảo.
     - Kích hoạt các lệnh thực thi cho GCD và Watchdog.
 
-### 3.3. Các lõi chức năng (Processing Cores)
+### 3.3. Lớp các lõi chức năng (Processing Cores)
 - **GCD:** Thực hiện thuật toán Euclid để tìm ước chung lớn nhất của hai số 32-bit.
 - **Watchdog_Core:** Giám sát tín hiệu "nuôi chó" (WDI) và quản lý trạng thái lỗi (Fault/WDO).
 
-### 3.4. Xử lý tín hiệu vật lý (Infrastructure)
+### 3.4. Lớp xử lý tín hiệu vật lý (Infrastructure)
 - **power_on_reset:** Đảm bảo hệ thống khởi động ở trạng thái xác định.
 - **debounce:** Khử rung phím cho các nút nhấn vật lý S1 (WDI) và S2 (Enable).
 
@@ -52,7 +52,7 @@ Hệ thống được chia thành các lớp chức năng rõ rệt:
 
 ## 4. Định nghĩa các chân I/O (Pin Mapping)
 
-| Tên chân | Loại | Mô tả | Linh kiện trên board (Kiwi-1P5) |
+| Tên chân | Loại | Mô tả | Linh kiện trên bo mạch |
 | :--- | :---: | :--- | :--- |
 | `clk` | IN | Xung nhịp hệ thống (27 MHz) | Crystal Oscillator |
 | `uart_rx` | IN | Nhận dữ liệu UART | Cổng USB-UART |
