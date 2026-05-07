@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity baud_gen is
     generic (
         CLK_FREQ  : integer := 27000000;
-        BAUD_RATE : integer := 9600
+        BAUD_RATE : integer := 115200
     );
     port (
         clk       : in  std_logic;
